@@ -22,7 +22,7 @@ async function login(interactive = true) {
   if(!loggedIn) {
     $('#login').show();
   } else {
-    authenticationSuccess();
+    begin();
   }
 }
 
@@ -49,7 +49,37 @@ function trelloAuth(interactive = true){
   });
 }
 
-function authenticationSuccess() {
+/**
+ * Promisify the Trello.rest() method provided by the client.js Trello library
+ * 
+ * @param {String} method
+ * @param {String} url
+ * @param {Object=} params
+ * @return {Promise} resolves to response object
+ */
+function trelloRequest(method, url, params = {}) {
+  return new Promise((resolve, reject) => {
+    Trello.rest(method, url, params, resolve, reject);
+  });
+}
+
+function begin() {
   $('#login').hide();
   document.write('<h2>Authenticated</h2>');
+  chooseBoard();
+}
+
+/**
+ * Choose an existing FamilySearch board or create a new one
+ */
+async function chooseBoard() {
+  
+  // Get a list of all personal (non-org boards)
+  const personalBoards = await trelloRequest('GET', '/members/me/boards', {
+    filter: 'open'
+  }).then((boards) => {
+    return boards.filter(b => b.idOrganization === null);
+  });
+  
+  // Is there an existing FamilySearch board?
 }
