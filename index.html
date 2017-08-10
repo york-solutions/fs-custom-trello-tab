@@ -4,12 +4,19 @@
     <meta charset="UTF-8">
     <title>Trello</title>
     <link rel="stylesheet" href="index.css">
+    <link href="https://fonts.googleapis.com/css?family=Lato:400,700" rel="stylesheet">
     <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
     <script src="https://api.trello.com/1/client.js?key=da1cd610f8de5fbba880a1e45dd8f33c"></script>
   </head>
   <body>
-    <h1>Trello</h1>
+    <h1>FamilySearch Research Tasks</h1>
     <a id="login" href="javascript:void(0)">Connect to Trello</a>
+    <div id="list"></div>
+    <div id="loading" class="spinner">
+      <div class="bounce1"></div>
+      <div class="bounce2"></div>
+      <div class="bounce3"></div>
+    </div>
     <script src="index.js"></script>
   </body>
 </html>

@@ -7,6 +7,7 @@ function setup() {
   
   // When the login is clicked we initiate interactive login meaning we use the popup
   $('#login').click(function(){
+    loading();
     login(true);
   });
   
@@ -23,6 +24,7 @@ async function login(interactive = true) {
   const loggedIn = await trelloAuth(interactive);
   if(!loggedIn) {
     $('#login').show();
+    notLoading();
   } else {
     begin();
   }
@@ -66,12 +68,29 @@ function trelloRequest(method, url, params = {}) {
 }
 
 async function begin() {
+  loading();
   $('#login').hide();
-  document.write('<h2>Authenticated</h2>');
   const boardId = await getBoardId();
   const listId = await getListId(boardId, getFSPersonId());
-  
-  console.log(listId);
+  await displayList(listId);
+  notLoading();
+}
+
+function loading() {
+  $('#loading').css('display', 'flex');
+}
+function notLoading() {
+  $('#loading').hide();
+}
+
+/**
+ * Display the Trello list
+ * 
+ * @param {String} listId
+ */
+async function displayList(listId) {
+  const cards = await trelloRequest('GET', `/lists/${listId}/cards`);
+  // TODO: display
 }
 
 /**
@@ -99,7 +118,6 @@ async function getListId(boardId, pid) {
   else {
     const personsName = await getFSPersonsName(pid);
     const response = await trelloRequest('POST', `/board/${boardId}/lists`, {
-      // TODO: add person's name to the board name
       name: personsName ? `${personsName} - ${pid}` : pid,
       pos: 'bottom'
     });
