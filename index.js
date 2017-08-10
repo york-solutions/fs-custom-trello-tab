@@ -141,9 +141,13 @@ async function displayList(listId) {
   const $list = $('#list').html('');
   
   // Render cards
-  cards.forEach(c => {
-    $list.append(displayCard(c));
-  });
+  if(cards.length) {
+    cards.forEach(c => {
+      $list.append(displayCard(c));
+    });
+  } else {
+    $list.append('<p>Use the tools on the right to add a research task.</p>');
+  }
 }
 
 /**
