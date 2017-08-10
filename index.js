@@ -90,7 +90,15 @@ function notLoading() {
  */
 async function displayList(listId) {
   const cards = await trelloRequest('GET', `/lists/${listId}/cards`);
-  // TODO: display
+  
+  // Clear any existing content
+  const $list = $('#list').html('');
+  
+  cards.forEach(c => {
+    $list.append($(`<div class="card">${c.name}</div>`).click(() => {
+      window.open(c.url, 'fstrello');
+    }));
+  });
 }
 
 /**

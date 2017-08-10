@@ -12,6 +12,17 @@ h1 {
   display: none;
 }
 
+.card {
+  padding: 1em;
+  border: 1px solid #ccc;
+  border-radius: .5em;
+  cursor: pointer;
+}
+
+.card:hover {
+  background-color: #fafafa;
+}
+
 /* http://tobiasahlin.com/spinkit/ */
 
 .spinner {
