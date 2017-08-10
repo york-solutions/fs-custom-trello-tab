@@ -1,3 +1,5 @@
+const BOARD_NAME = 'FamilySearch Research Tasks';
+const BOARD_DESCRIPTION = 'Track your research tasks in Trello. Used by the FamilySearch Custom Trello Tab.';
 
 setup();
 
@@ -63,23 +65,84 @@ function trelloRequest(method, url, params = {}) {
   });
 }
 
-function begin() {
+async function begin() {
   $('#login').hide();
   document.write('<h2>Authenticated</h2>');
-  chooseBoard();
+  const boardId = await getBoardId();
+  const listId = await getListId(boardId, getFSPersonId());
+  
+  console.log(listId);
+}
+
+function getFSPersonId() {
+  const params = (new URL(document.location.href)).searchParams;
+  return params.get('pid');
 }
 
 /**
- * Choose an existing FamilySearch board or create a new one
+ * Get the ID of the Trello list for this person, or create a new one
+ * 
+ * @param {String} boardId Trello board ID
+ * @param {String} pid FamilySearch person ID
  */
-async function chooseBoard() {
+async function getListId(boardId, pid) {
   
-  // Get a list of all personal (non-org boards)
-  const personalBoards = await trelloRequest('GET', '/members/me/boards', {
+  const nameRegex = new RegExp(`${pid}$`);
+  
+  // Get all lists for this board
+  const existingList = await trelloRequest('GET', `/board/${boardId}/lists`, {
     filter: 'open'
-  }).then((boards) => {
-    return boards.filter(b => b.idOrganization === null);
+  }).then((lists) => {
+    return lists.find(l => nameRegex.test(l.name));
   });
   
-  // Is there an existing FamilySearch board?
+  if(existingList) {
+    return existingList.id;
+  } 
+  
+  // Create a new board for this person
+  else {
+    const response = await trelloRequest('POST', `/board/${boardId}/lists`, {
+      // TODO: add person's name to the board name
+      name: pid,
+      pos: 'bottom'
+    });
+    return response.id;
+  }
+}
+
+/**
+ * Get the ID of the FamilySearch board or create a new board and return its ID
+ */
+async function getBoardId() {
+  
+  // Get a list of open boards
+  const existingFamilySearchBoard = await trelloRequest('GET', '/members/me/boards', {
+    filter: 'open'
+  })
+  
+  // Filter to just personal boards
+  .then((boards) => {
+    return boards.filter(b => b.idOrganization === null);
+  })
+  
+  // Choose a FamilySearch board if one exists
+  .then((boards) => {
+    return boards.find(b => b.name === BOARD_NAME);
+  });
+  
+  if(existingFamilySearchBoard) {
+    return existingFamilySearchBoard.id;
+  } 
+  
+  // Create a board if one doesn't exist
+  else {
+    const response = await trelloRequest('POST', '/boards', {
+      name: BOARD_NAME,
+      desc: BOARD_DESCRIPTION,
+      defaultLists: false
+    });
+    return response.id;
+  }
+  
 }
