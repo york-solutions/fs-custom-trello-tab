@@ -70,9 +70,19 @@ function trelloRequest(method, url, params = {}) {
 async function begin() {
   loading();
   $('#login').hide();
+  
   const boardId = await getBoardId();
   const listId = await getListId(boardId, getFSPersonId());
   await displayList(listId);
+  
+  $('#new-card-button').click(() => {
+    addNewCard(listId);
+  });
+  $('#new-card-title').keypress(function(e) {
+    if(e.which == 13) {
+      addNewCard(listId);
+    }
+  });
   $('#content').show();
   notLoading();
 }
@@ -85,13 +95,46 @@ function notLoading() {
 }
 
 /**
+ * Add a new card to the list
+ * 
+ * @param {String} listId Trello list ID
+ */
+function addNewCard(listId) {
+  const $title = $('#new-card-title');
+  const title = $title.val().trim();
+  
+  if(!title) {
+    $title.addClass('error');
+    $('#new-card-title-error').show();
+    return;
+  } else {
+    $title.removeClass('error');
+    $('#new-card-title-error').hide();
+  }
+  
+  const $desc = $('#new-card-desc');
+  $('#new-card-button').prop('disabled', true);
+  
+  trelloRequest('POST', `/cards`, {
+    name: title,
+    desc: $desc.val().trim(),
+    idList: listId
+  }).then(() => {
+    $title.val('');
+    $desc.val('');
+    $('#new-card-button').prop('disabled', false);
+    loading();
+    displayList(listId);
+    notLoading();
+  });
+}
+
+/**
  * Display the Trello list
  * 
  * @param {String} listId
  */
 async function displayList(listId) {
-  loading();
-  
   const cards = await trelloRequest('GET', `/lists/${listId}/cards`);
   
   // Clear any existing cards
@@ -101,10 +144,14 @@ async function displayList(listId) {
   cards.forEach(c => {
     $list.append(displayCard(c));
   });
-  
-  notLoading();
 }
 
+/**
+ * Generate the DOM for a card
+ * 
+ * @param {Object} card card data from the Trello API
+ * @return {jQuery Element}
+ */
 function displayCard(card) {
   const $card = $(`<div class="card"><div class="card-title">${card.name}</div></div>`).click(() => {
     window.open(card.url, 'fstrello');

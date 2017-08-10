@@ -21,7 +21,8 @@ h1 {
   margin-left: 1em;
 }
 
-#new-card-title, #new-card-desc {
+#new-card-title, 
+#new-card-desc {
   margin-bottom: .5em;
   padding: .5em;
   width: 100%;
@@ -31,12 +32,31 @@ h1 {
   border-radius: .25em;
 }
 
+#new-card-desc {
+  height: 100px;
+}
+
+#new-card-title.error {
+  border: 1px solid #c52323;
+}
+
+#new-card-title-error {
+  color: #c52323;
+  display: none;
+  margin: 0 0 .5em 0;
+  font-size: .8em;
+}
+
 #new-card-button {
   background-color: #0079bf;
   color: white;
   border: 0;
   padding: .5em;
   border-radius: .25em;
+}
+
+#new-card-button[disabled] {
+  background-color: #5ca3cc;
 }
 
 #list {
@@ -48,6 +68,7 @@ h1 {
   border: 1px solid #ccc;
   border-radius: .25em;
   cursor: pointer;
+  margin-bottom: 1em;
 }
 
 .card:hover {
