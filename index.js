@@ -73,6 +73,7 @@ async function begin() {
   const boardId = await getBoardId();
   const listId = await getListId(boardId, getFSPersonId());
   await displayList(listId);
+  $('#content').show();
   notLoading();
 }
 
@@ -89,16 +90,29 @@ function notLoading() {
  * @param {String} listId
  */
 async function displayList(listId) {
+  loading();
+  
   const cards = await trelloRequest('GET', `/lists/${listId}/cards`);
   
-  // Clear any existing content
+  // Clear any existing cards
   const $list = $('#list').html('');
   
+  // Render cards
   cards.forEach(c => {
-    $list.append($(`<div class="card">${c.name}</div>`).click(() => {
-      window.open(c.url, 'fstrello');
-    }));
+    $list.append(displayCard(c));
   });
+  
+  notLoading();
+}
+
+function displayCard(card) {
+  const $card = $(`<div class="card"><div class="card-title">${card.name}</div></div>`).click(() => {
+    window.open(card.url, 'fstrello');
+  });
+  if(card.desc){
+    $card.append(`<p class="card-desc">${card.desc}</p>`);
+  }
+  return $card;
 }
 
 /**

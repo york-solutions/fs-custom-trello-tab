@@ -1,5 +1,5 @@
 body {
-  width: 500px;
+  width: 600px;
   margin: auto;
   font-family: Lato, sans-serif;
 }
@@ -12,15 +12,54 @@ h1 {
   display: none;
 }
 
+#content {
+  display: flex;
+}
+
+.new-card {
+  flex: 1;
+  margin-left: 1em;
+}
+
+#new-card-title, #new-card-desc {
+  margin-bottom: .5em;
+  padding: .5em;
+  width: 100%;
+  box-sizing: border-box;
+  border: 1px solid #ccc;
+  font-family: Lato, sans-serif;
+  border-radius: .25em;
+}
+
+#new-card-button {
+  background-color: #0079bf;
+  color: white;
+  border: 0;
+  padding: .5em;
+  border-radius: .25em;
+}
+
+#list {
+  flex: 2;
+}
+
 .card {
   padding: 1em;
   border: 1px solid #ccc;
-  border-radius: .5em;
+  border-radius: .25em;
   cursor: pointer;
 }
 
 .card:hover {
   background-color: #fafafa;
+}
+
+.card-title {
+  font-weight: bold;
+}
+
+.card-desc {
+  margin: 1em 0 0;
 }
 
 /* http://tobiasahlin.com/spinkit/ */

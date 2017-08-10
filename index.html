@@ -11,7 +11,14 @@
   <body>
     <h1>Research Tasks</h1>
     <a id="login" href="javascript:void(0)">Connect to Trello</a>
-    <div id="list"></div>
+    <div id="content">
+      <div id="list"></div>
+      <div class="new-card">
+        <input id="new-card-title" type="text" placeholder="Task title"/>
+        <textarea id="new-card-desc" placeholder="Task description"></textarea>
+        <button id="new-card-button">Add New Task</button>
+      </div>
+    </div>
     <div id="loading" class="spinner">
       <div class="bounce1"></div>
       <div class="bounce2"></div>
