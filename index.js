@@ -74,11 +74,6 @@ async function begin() {
   console.log(listId);
 }
 
-function getFSPersonId() {
-  const params = (new URL(document.location.href)).searchParams;
-  return params.get('pid');
-}
-
 /**
  * Get the ID of the Trello list for this person, or create a new one
  * 
@@ -102,9 +97,10 @@ async function getListId(boardId, pid) {
   
   // Create a new board for this person
   else {
+    const personsName = await getFSPersonsName(pid);
     const response = await trelloRequest('POST', `/board/${boardId}/lists`, {
       // TODO: add person's name to the board name
-      name: pid,
+      name: personsName ? `${personsName} - ${pid}` : pid,
       pos: 'bottom'
     });
     return response.id;
@@ -145,4 +141,32 @@ async function getBoardId() {
     return response.id;
   }
   
+}
+
+/**
+ * Get the name of the FS person
+ * 
+ * @param {String} pid FamilySearch person ID
+ */
+async function getFSPersonsName(pid) {
+  const response = await fetch(`https://familysearch.org/platform/tree/persons/${pid}`, {
+    headers: new Headers({
+      Accept: 'application/json',
+      Authorization: `Bearer ${getFSToken()}`
+    })
+  });
+  if(response.ok) {
+    const json = await response.json();
+    return json.persons[0].display.name;
+  }
+}
+
+function getFSPersonId() {
+  const params = (new URL(document.location.href)).searchParams;
+  return params.get('pid');
+}
+
+function getFSToken() {
+  const params = (new URL(document.location.href)).searchParams;
+  return params.get('token');
 }
