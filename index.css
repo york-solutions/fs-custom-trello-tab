@@ -4,16 +4,34 @@ body {
   font-family: Lato, sans-serif;
 }
 
-h1 {
+header {
   text-align: center;
+}
+
+button {
+  background-color: #0079bf;
+  border: 0;
+  border-radius: .25em;
+  color: white;
+  padding: .5em;
 }
 
 #login {
   display: none;
+  font-size: 1.25em;
+  margin: auto;
+  align-items: center;
+  cursor: pointer;
+}
+
+#login img {
+  height: 20px;
+  vertical-align: middle;
+  margin-right: .5em;
 }
 
 #content {
-  display: flex;
+  display: none;
 }
 
 .new-card {
@@ -45,14 +63,6 @@ h1 {
   display: none;
   margin: 0 0 .5em 0;
   font-size: .8em;
-}
-
-#new-card-button {
-  background-color: #0079bf;
-  color: white;
-  border: 0;
-  padding: .5em;
-  border-radius: .25em;
 }
 
 #new-card-button[disabled] {

@@ -23,7 +23,7 @@ function setup() {
 async function login(interactive = true) {
   const loggedIn = await trelloAuth(interactive);
   if(!loggedIn) {
-    $('#login').show();
+    $('#login').css('display', 'flex');
     notLoading();
   } else {
     begin();
@@ -83,7 +83,7 @@ async function begin() {
       addNewCard(listId);
     }
   });
-  $('#content').show();
+  $('#content').css('display', 'flex');
   notLoading();
 }
 
