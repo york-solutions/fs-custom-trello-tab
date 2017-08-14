@@ -77,12 +77,28 @@ async function begin() {
   $('#list-title').text(list.name);
   await displayList(listId);
   
-  $('#new-card-button').click(() => {
+  $('#new-card-link').click(function(e){
+    $(this).hide();
+    $('#new-card').show();
+    $('#new-card-title').focus();
+    e.preventDefault();
+    e.stopPropagation();
+  });
+  
+  $(document.body).click(() => {
+    $('#new-card-link').show();
+    $('#new-card').hide();
+  });
+  
+  $('#new-card-button').click((e) => {
     addNewCard(listId);
+    e.stopPropagation();
   });
   $('#new-card-title').keypress(function(e) {
     if(e.which == 13) {
       addNewCard(listId);
+      e.stopPropagation();
+      e.preventDefault();
     }
   });
   $('#content').show();
@@ -106,25 +122,16 @@ function addNewCard(listId) {
   const title = $title.val().trim();
   
   if(!title) {
-    $title.addClass('error');
-    $('#new-card-title-error').show();
     return;
-  } else {
-    $title.removeClass('error');
-    $('#new-card-title-error').hide();
   }
-  
-  const $desc = $('#new-card-desc');
-  $('#new-card-button').prop('disabled', true);
   
   trelloRequest('POST', `/cards`, {
     name: title,
-    desc: $desc.val().trim(),
     idList: listId
   }).then(() => {
     $title.val('');
-    $desc.val('');
     $('#new-card-button').prop('disabled', false);
+    $('#new-card-title').focus();
     loading();
     displayList(listId);
     notLoading();

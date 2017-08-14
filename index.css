@@ -1,4 +1,4 @@
-html, body, button, input, textarea {
+html, body, button, textarea {
   font-family: "Helvetica Neue", Arial, Helvetica, sans-serif;
   font-size: 14px;
   color: #4d4d4d;
@@ -9,12 +9,20 @@ header {
   text-align: center;
 }
 
+a {
+  text-decoration: none;
+}
+
 button {
-  background-color: #0079bf;
   border: 0;
   border-radius: 3px;
-  color: white;
-  padding: .5em;
+  color: #fff;
+  padding: 4px 16px;
+  background: linear-gradient(to bottom,#61BD4F 0,#5AAC44 100%);
+  box-shadow: 0 1px 0 #3F6F21;
+  font-weight: bold;
+  line-height: 22px;
+  cursor: pointer;
 }
 
 #login {
@@ -43,7 +51,7 @@ button {
 
 #list-title {
   font-weight: bold;
-  margin: 0 0 9px;
+  margin: 0;
 }
 
 #list {
@@ -55,7 +63,7 @@ button {
   border-bottom: 1px solid #ccc;
   border-radius: 3px;
   cursor: pointer;
-  margin-bottom: 6px;
+  margin-top: 6px;
   background-color: white;
 }
 
@@ -65,35 +73,38 @@ button {
 
 .card-desc {
   background: url(trello-description.svg) no-repeat;
-  width: 14px;
+  width: 12px;
   background-size: contain;
   margin-top: 6px;
+  margin-left: 4px;
 }
 
-#new-card-title, 
-#new-card-desc {
-  margin-bottom: .5em;
-  padding: .5em;
+#new-card-link {
+  color: #8c8c8c;
+  display: block;
+  margin-top: 8px;
+}
+
+#new-card-link:hover {
+  color: #4d4d4d;
+  text-decoration: underline;
+}
+
+#new-card {
+  display: none;
+}
+
+#new-card-title {
+  margin: 6px 0 3px 0;
+  padding: 6px;
   width: 100%;
   box-sizing: border-box;
   border: 0;
   border-bottom: 1px solid #ccc;
   border-radius: 3px;
-}
-
-#new-card-desc {
-  height: 100px;
-}
-
-#new-card-title.error {
-  border: 1px solid #c52323;
-}
-
-#new-card-title-error {
-  color: #c52323;
-  display: none;
-  margin: 0 0 .5em 0;
-  font-size: .8em;
+  height: 70px;
+  resize: none;
+  outline: 0;
 }
 
 #new-card-button[disabled] {
