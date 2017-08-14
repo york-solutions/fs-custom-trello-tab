@@ -4,16 +4,15 @@
     <meta charset="UTF-8">
     <title>Trello</title>
     <link rel="stylesheet" href="index.css">
-    <link href="https://fonts.googleapis.com/css?family=Lato:400,700" rel="stylesheet">
     <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
     <script src="https://api.trello.com/1/client.js?key=da1cd610f8de5fbba880a1e45dd8f33c"></script>
   </head>
   <body>
     <header>
-      <h1>Research Tasks</h1>
       <button id="login"><img src="trello-mark-white.svg">Connect to Trello</button>
     </header>
     <div id="content">
+      <div id="list-title"></div>
       <div id="list"></div>
       <div class="new-card">
         <input id="new-card-title" type="text" placeholder="Task title"/>

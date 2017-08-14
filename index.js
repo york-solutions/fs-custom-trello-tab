@@ -72,7 +72,9 @@ async function begin() {
   $('#login').hide();
   
   const boardId = await getBoardId();
-  const listId = await getListId(boardId, getFSPersonId());
+  const list = await getList(boardId, getFSPersonId());
+  const listId = list.id;
+  $('#list-title').text(list.name);
   await displayList(listId);
   
   $('#new-card-button').click(() => {
@@ -83,7 +85,7 @@ async function begin() {
       addNewCard(listId);
     }
   });
-  $('#content').css('display', 'flex');
+  $('#content').show();
   notLoading();
 }
 
@@ -145,8 +147,6 @@ async function displayList(listId) {
     cards.forEach(c => {
       $list.append(displayCard(c));
     });
-  } else {
-    $list.append('<p>Use the tools on the right to add a research task.</p>');
   }
 }
 
@@ -161,18 +161,18 @@ function displayCard(card) {
     window.open(card.url, 'fstrello');
   });
   if(card.desc){
-    $card.append(`<p class="card-desc">${card.desc}</p>`);
+    $card.append(`<div class="card-desc">&nbsp;</div>`);
   }
   return $card;
 }
 
 /**
- * Get the ID of the Trello list for this person, or create a new one
+ * Get the Trello list for this person, or create a new one
  * 
  * @param {String} boardId Trello board ID
  * @param {String} pid FamilySearch person ID
  */
-async function getListId(boardId, pid) {
+async function getList(boardId, pid) {
   
   const nameRegex = new RegExp(`${pid}$`);
   
@@ -184,17 +184,16 @@ async function getListId(boardId, pid) {
   });
   
   if(existingList) {
-    return existingList.id;
+    return existingList;
   } 
   
   // Create a new board for this person
   else {
     const personsName = await getFSPersonsName(pid);
-    const response = await trelloRequest('POST', `/board/${boardId}/lists`, {
+    return await trelloRequest('POST', `/board/${boardId}/lists`, {
       name: personsName ? `${personsName} - ${pid}` : pid,
       pos: 'bottom'
     });
-    return response.id;
   }
 }
 
