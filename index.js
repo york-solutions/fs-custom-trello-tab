@@ -71,11 +71,21 @@ async function begin() {
   loading();
   $('#login').hide();
   
+  // Get/create Trello board and list
+  
   const boardId = await getBoardId();
-  const list = await getList(boardId, getFSPersonId());
+  const pid = getFSPersonId();
+  const personsName = await getFSPersonsName(pid);
+  const newCardDesc = `${personsName}'s profile: https://familysearch.org/tree/person/${pid}`;
+  let list = await getList(boardId, pid);
+  if(!list) {
+    list = await createList(boardId, personsName ? `${personsName} - ${pid}` : pid)
+  }
   const listId = list.id;
   $('#list-title').text(list.name);
   await displayList(listId);
+  
+  // Setup event listeners
   
   $('#new-card-link').click(function(e){
     $(this).hide();
@@ -91,17 +101,19 @@ async function begin() {
   });
   
   $('#new-card-button').click((e) => {
-    addNewCard(listId);
+    addNewCard(listId, newCardDesc);
     e.stopPropagation();
   });
   $('#new-card-title').keypress(function(e) {
     if(e.which == 13) {
-      addNewCard(listId);
+      addNewCard(listId, newCardDesc);
       e.stopPropagation();
       e.preventDefault();
     }
   });
   $('#content').show();
+  
+  // Now we're done loading
   notLoading();
 }
 
@@ -116,8 +128,9 @@ function notLoading() {
  * Add a new card to the list
  * 
  * @param {String} listId Trello list ID
+ * @param {String} desc
  */
-function addNewCard(listId) {
+function addNewCard(listId, desc) {
   const $title = $('#new-card-title');
   const title = $title.val().trim();
   
@@ -127,7 +140,8 @@ function addNewCard(listId) {
   
   trelloRequest('POST', `/cards`, {
     name: title,
-    idList: listId
+    idList: listId,
+    desc
   }).then(() => {
     $title.val('');
     $('#new-card-button').prop('disabled', false);
@@ -180,28 +194,26 @@ function displayCard(card) {
  * @param {String} pid FamilySearch person ID
  */
 async function getList(boardId, pid) {
-  
   const nameRegex = new RegExp(`${pid}$`);
-  
-  // Get all lists for this board
-  const existingList = await trelloRequest('GET', `/board/${boardId}/lists`, {
+  return await trelloRequest('GET', `/board/${boardId}/lists`, {
     filter: 'open'
   }).then((lists) => {
     return lists.find(l => nameRegex.test(l.name));
   });
-  
-  if(existingList) {
-    return existingList;
-  } 
-  
-  // Create a new board for this person
-  else {
-    const personsName = await getFSPersonsName(pid);
-    return await trelloRequest('POST', `/board/${boardId}/lists`, {
-      name: personsName ? `${personsName} - ${pid}` : pid,
-      pos: 'bottom'
-    });
-  }
+}
+
+/**
+ * Create a Trello list
+ * 
+ * @param {String} boardId Trello board ID
+ * @param {String} name Name of the new Trello board
+ * @return {Object} trello list
+ */
+async function createList(boardId, name) {
+  return await trelloRequest('POST', `/board/${boardId}/lists`, {
+    name,
+    pos: 'bottom'
+  });
 }
 
 /**
