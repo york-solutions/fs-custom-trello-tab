@@ -77,13 +77,14 @@ async function begin() {
   const pid = getFSPersonId();
   const personsName = await getFSPersonsName(pid);
   const newCardDesc = `${personsName}'s profile: https://familysearch.org/tree/person/${pid}`;
+  const tempListName = personsName ? `${personsName} - ${pid}` : pid;
+  
   let list = await getList(boardId, pid);
-  if(!list) {
-    list = await createList(boardId, personsName ? `${personsName} - ${pid}` : pid)
+  
+  $('#list-title').text(list ? list.name : tempListName);
+  if(list) {
+    await displayList(list.id);
   }
-  const listId = list.id;
-  $('#list-title').text(list.name);
-  await displayList(listId);
   
   // Setup event listeners
   
@@ -100,21 +101,30 @@ async function begin() {
     $('#new-card').hide();
   });
   
-  $('#new-card-button').click((e) => {
-    addNewCard(listId, newCardDesc);
+  $('#new-card-button').click(async function(e) {
+    let list = await ensureList();
+    addNewCard(list.id, newCardDesc);
     e.stopPropagation();
   });
-  $('#new-card-title').keypress(function(e) {
+  $('#new-card-title').keypress(async function(e) {
     if(e.which == 13) {
-      addNewCard(listId, newCardDesc);
       e.stopPropagation();
       e.preventDefault();
+      let list = await ensureList();
+      addNewCard(list.id, newCardDesc);
     }
   });
   $('#content').show();
   
   // Now we're done loading
   notLoading();
+  
+  async function ensureList() {
+    if(!list) {
+      list = await createList(boardId, tempListName);
+    }
+    return list;
+  }
 }
 
 function loading() {
